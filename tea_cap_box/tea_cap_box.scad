@@ -27,6 +27,9 @@ floor_t   = 2.0;   // fond (10 couches)
 divider_t = 1.6;   // épaisseur séparateurs (4 périmètres)
 fillet_r  = 3;     // rayon congé haut des parois
 scoop_r   = 12;    // rayon découpe arrondie paroi avant
+drain_slot_w = 1.2; // largeur fente grillage (3 lignes à 0.4)
+drain_bar_w  = 1.2; // largeur barreau entre fentes
+drain_margin = 3;   // marge autour du grillage
 
 // --- Dimensions calculées ---
 
@@ -78,6 +81,21 @@ module dividers() {
     }
 }
 
+module drain_grid() {
+    // Fentes parallèles d'écoulement au fond de chaque logement
+    slot_w = cap_thickness + tol;
+    grid_d = inner_d - 2 * drain_margin;
+    pitch = drain_slot_w + drain_bar_w;
+
+    for (i = [0:num_caps - 1]) {
+        slot_x = wall + tol/2 + i * slot_w;
+        for (sx = [0 : pitch : slot_w - 2 * drain_margin])
+            if (sx + drain_slot_w <= slot_w - 2 * drain_margin)
+                translate([slot_x + drain_margin + sx, wall + drain_margin, -1])
+                    cube([drain_slot_w, grid_d, floor_t + 2]);
+    }
+}
+
 module grip_scoops() {
     // Découpes arrondies au milieu du haut de chaque séparateur
     for (i = [1:num_caps - 1]) {
@@ -112,6 +130,9 @@ module box() {
 
         // Découpes arrondies dans les séparateurs (après union)
         grip_scoops();
+
+        // Grillage d'écoulement au fond
+        drain_grid();
     }
 }
 
