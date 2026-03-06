@@ -1,4 +1,4 @@
-include <BOSL2/std.scad>
+include <../BOSL2/std.scad>
 
 // ===========================================
 // Boîte de rangement pour chapeaux d'infuseur
@@ -22,9 +22,10 @@ tol     = 0.3;    // tolérance générale par côté
 mag_tol = 0.15;   // tolérance aimants (ajustement serré)
 
 // --- Construction ---
-wall      = 1.6;   // parois latérales (4 périmètres)
-floor_t   = 1.6;   // fond (8 couches)
-divider_t = 1.2;  // épaisseur séparateurs (3 périmètres)
+wall      = 2.4;   // parois latérales (6 périmètres)
+floor_t   = 2.0;   // fond (10 couches)
+divider_t = 1.6;   // épaisseur séparateurs (4 périmètres)
+fillet_r  = 3;     // rayon congé haut des parois
 
 // --- Dimensions calculées ---
 
@@ -79,12 +80,15 @@ module dividers() {
 module box() {
     union() {
         difference() {
-            // Coque extérieure
-            cube([outer_w, outer_d, outer_h]);
+            // Coque extérieure avec congés sur les arêtes du haut uniquement
+            translate([outer_w/2, outer_d/2, outer_h/2])
+                cuboid([outer_w, outer_d, outer_h],
+                    rounding=fillet_r, edges=[TOP+FRONT, TOP+LEFT, TOP+RIGHT], $fn=32,
+                    anchor=CENTER);
 
             // Cavité intérieure (ouverte en haut)
             translate([wall, wall, floor_t])
-                cube([inner_w, inner_d, inner_h + 1]);
+                cube([inner_w, inner_d, inner_h + fillet_r + 1]);
 
             // Logements aimants (traversants à l'arrière)
             magnet_pockets();
