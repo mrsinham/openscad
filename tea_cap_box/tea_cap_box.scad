@@ -26,6 +26,7 @@ wall      = 2.4;   // parois latérales (6 périmètres)
 floor_t   = 2.0;   // fond (10 couches)
 divider_t = 1.6;   // épaisseur séparateurs (4 périmètres)
 fillet_r  = 3;     // rayon congé haut des parois
+scoop_r   = 12;    // rayon découpe arrondie paroi avant
 
 // --- Dimensions calculées ---
 
@@ -77,25 +78,40 @@ module dividers() {
     }
 }
 
+module grip_scoops() {
+    // Découpes arrondies au milieu du haut de chaque séparateur
+    for (i = [1:num_caps - 1]) {
+        divider_x = wall + i * (cap_thickness + tol) + tol/2;
+        translate([divider_x, wall + inner_d/2, outer_h])
+            rotate([0, 90, 0])
+                cylinder(r=scoop_r, h=divider_t + 2, center=true, $fn=32);
+    }
+}
+
 module box() {
-    union() {
-        difference() {
-            // Coque extérieure avec congés sur les arêtes du haut uniquement
-            translate([outer_w/2, outer_d/2, outer_h/2])
-                cuboid([outer_w, outer_d, outer_h],
-                    rounding=fillet_r, edges=[TOP+FRONT, TOP+LEFT, TOP+RIGHT], $fn=32,
-                    anchor=CENTER);
+    difference() {
+        union() {
+            difference() {
+                // Coque extérieure avec congés sur les arêtes du haut uniquement
+                translate([outer_w/2, outer_d/2, outer_h/2])
+                    cuboid([outer_w, outer_d, outer_h],
+                        rounding=fillet_r, edges=[TOP+FRONT, TOP+LEFT, TOP+RIGHT], $fn=32,
+                        anchor=CENTER);
 
-            // Cavité intérieure (ouverte en haut)
-            translate([wall, wall, floor_t])
-                cube([inner_w, inner_d, inner_h + fillet_r + 1]);
+                // Cavité intérieure (ouverte en haut)
+                translate([wall, wall, floor_t])
+                    cube([inner_w, inner_d, inner_h + fillet_r + 1]);
 
-            // Logements aimants (traversants à l'arrière)
-            magnet_pockets();
+                // Logements aimants (traversants à l'arrière)
+                magnet_pockets();
+            }
+
+            // Séparateurs
+            dividers();
         }
 
-        // Séparateurs (ajoutés après la cavité pour rester solides)
-        dividers();
+        // Découpes arrondies dans les séparateurs (après union)
+        grip_scoops();
     }
 }
 
