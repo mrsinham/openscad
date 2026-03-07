@@ -2,6 +2,11 @@
 
 ## Structure du dépot
 - `BOSL2/` - Librairie BOSL2 (submodule git) - https://github.com/BelfrySCAD/BOSL2
+- `libs/` - Librairies Multiboard (submodules git)
+  - `libs/multiboard-parametric-stacked/` - Tuiles empilées paramétriques
+  - `libs/MultiConnectOpenSCAD/` - QuackWorks, prints fonctionnels paramétriques avec interfaces de montage
+  - `libs/mb-tile-generator/` - Générateur de tuiles Multiboard (OpenSCAD + Python GUI)
+  - `libs/multiboard-storage-solution/` - Solution de rangement modulaire Multiboard
 - `tea_cap_box/` - Boite de rangement pour chapeaux d'infuseur a the
 - Chaque projet est dans son propre répertoire
 - Les fichiers .scad incluent BOSL2 via chemin relatif : `include <../BOSL2/std.scad>`

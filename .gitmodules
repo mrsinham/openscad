@@ -1,3 +1,15 @@
 [submodule "/home/julien/programmation/openscad/BOSL2"]
 	path = /home/julien/programmation/openscad/BOSL2
 	url = https://github.com/BelfrySCAD/BOSL2.git
+[submodule "/home/julien/programmation/openscad/libs/multiboard-parametric-stacked"]
+	path = /home/julien/programmation/openscad/libs/multiboard-parametric-stacked
+	url = https://github.com/asciipip/multiboard-parametric-stacked.git
+[submodule "/home/julien/programmation/openscad/libs/MultiConnectOpenSCAD"]
+	path = /home/julien/programmation/openscad/libs/MultiConnectOpenSCAD
+	url = https://github.com/AndyLevesque/MultiConnectOpenSCAD.git
+[submodule "/home/julien/programmation/openscad/libs/mb-tile-generator"]
+	path = /home/julien/programmation/openscad/libs/mb-tile-generator
+	url = https://github.com/slynn1324/mb-tile-generator.git
+[submodule "/home/julien/programmation/openscad/libs/multiboard-storage-solution"]
+	path = /home/julien/programmation/openscad/libs/multiboard-storage-solution
+	url = https://github.com/colbytimm/multiboard-storage-solution.git
