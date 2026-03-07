@@ -6,8 +6,8 @@ include <../BOSL2/std.scad>
 // ===========================================
 
 // --- Chapeaux d'infuseur ---
-cap_diameter  = 75;   // diamètre max (mm)
-cap_thickness = 15;   // épaisseur max (mm)
+cap_diameter  = 80;   // diamètre max (mm)
+cap_thickness = 20;   // épaisseur max (mm)
 num_caps      = 5;    // nombre de chapeaux à stocker
 
 // --- Aimants 8 x 18 x 1.5 mm ---
@@ -19,7 +19,9 @@ num_mag_pockets = 2;  // nombre de logements
 nozzle  = 0.4;
 layer_h = 0.2;
 tol     = 0.3;    // tolérance générale par côté
-mag_tol = 0.15;   // tolérance aimants (ajustement serré)
+mag_tol = 0.15;   // tolérance aimants
+mag_pw_override = 10;  // largeur poche aimant forcée (mm)
+mag_ph_override = 19;  // hauteur poche aimant forcée (mm)
 
 // --- Construction ---
 wall      = 2.4;   // parois latérales (6 périmètres)
@@ -34,8 +36,8 @@ drain_margin = 3;   // marge autour du grillage
 // --- Dimensions calculées ---
 
 // Logement aimant
-mag_pw = mag.x + 2 * mag_tol;           // largeur poche (X)
-mag_ph = mag.y + 2 * mag_tol;           // hauteur poche (Z)
+mag_pw = mag_pw_override;                // largeur poche (X)
+mag_ph = mag_ph_override;                // hauteur poche (Z)
 mag_pd = mag.z * mag_stack + 2 * mag_tol; // profondeur poche (Y)
 
 // Intérieur boîte
@@ -83,16 +85,24 @@ module dividers() {
 
 module drain_grid() {
     // Fentes parallèles d'écoulement au fond de chaque logement
+    // avec un barreau perpendiculaire au milieu pour rigidifier
     slot_w = cap_thickness + tol;
     grid_d = inner_d - 2 * drain_margin;
     pitch = drain_slot_w + drain_bar_w;
+    mid_bar = drain_bar_w;  // largeur du barreau central
 
     for (i = [0:num_caps - 1]) {
         slot_x = wall + tol/2 + i * slot_w;
+        half_d = (grid_d - mid_bar) / 2;
         for (sx = [0 : pitch : slot_w - 2 * drain_margin])
-            if (sx + drain_slot_w <= slot_w - 2 * drain_margin)
+            if (sx + drain_slot_w <= slot_w - 2 * drain_margin) {
+                // Fentes partie avant (avant le barreau central)
                 translate([slot_x + drain_margin + sx, wall + drain_margin, -1])
-                    cube([drain_slot_w, grid_d, floor_t + 2]);
+                    cube([drain_slot_w, half_d, floor_t + 2]);
+                // Fentes partie arrière (après le barreau central)
+                translate([slot_x + drain_margin + sx, wall + drain_margin + half_d + mid_bar, -1])
+                    cube([drain_slot_w, half_d, floor_t + 2]);
+            }
     }
 }
 
