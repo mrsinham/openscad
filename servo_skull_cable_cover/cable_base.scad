@@ -66,16 +66,18 @@ module base_plate() {
         translate([(base_width - channel_w) / 2, -0.01, base_thick])
             cube([channel_w, base_length + 0.02, channel_d + 0.01]);
 
-        // Trous de vis murales avec fraisage conique
+        // Trous de vis murales avec fraisage conique (de chaque cote du canal)
         for (y = [screw_inset, base_length - screw_inset])
-            translate([base_width / 2, y, 0])
-                countersunk_hole();
+            for (side = [-1, 1])
+                translate([base_width / 2 + side * (channel_w / 2 + 5), y, 0])
+                    countersunk_hole();
 
         // Trous pour inserts M3 heat-set (4 inserts par base)
+        // Inserts enfonces depuis le dessus (face avant), dans les ailes laterales
         for (y = [insert_y1, insert_y2])
             for (side = [-1, 1]) {
                 ix = base_width / 2 + side * insert_offset_x;
-                translate([ix, y, base_thick + channel_d - insert_h])
+                translate([ix, y, base_thick - insert_h])
                     cylinder(d = insert_d, h = insert_h + 0.01, $fn = 24);
             }
     }
@@ -83,12 +85,13 @@ module base_plate() {
 
 module countersunk_hole() {
     total_h = base_thick + channel_d;
+    cone_h = (screw_head_d - screw_d) / 2;
     // Trou traversant
     translate([0, 0, -0.01])
         cylinder(d = screw_d, h = total_h + 0.02, $fn = 24);
-    // Cone de fraisage (cote mur, en bas)
-    translate([0, 0, -0.01])
-        cylinder(d1 = screw_head_d, d2 = screw_d, h = (screw_head_d - screw_d) / 2 + 0.01, $fn = 24);
+    // Cone de fraisage en haut (cote visible/coffrage, la vis entre par le dessus)
+    translate([0, 0, total_h - cone_h])
+        cylinder(d1 = screw_d, d2 = screw_head_d, h = cone_h + 0.01, $fn = 24);
 }
 
 module cable_clips() {
