@@ -1,0 +1,27 @@
+{
+    "fileFormatVersion": "1",
+    "parameterSets": {
+        "New set 1": {
+            "base_length": "280",
+            "base_thick": "2",
+            "base_width": "40",
+            "channel_d": "6",
+            "channel_w": "11",
+            "clip_gap": "6",
+            "clip_h": "3",
+            "clip_spacing": "70",
+            "clip_t": "1.2",
+            "clip_w": "2",
+            "insert_d": "4.2000000000000002",
+            "insert_h": "5",
+            "insert_y1": "50",
+            "insert_y2": "230",
+            "layer_h": "0.20000000000000001",
+            "nozzle": "0.40000000000000002",
+            "screw_d": "4",
+            "screw_head_d": "8",
+            "screw_head_h": "1.5",
+            "screw_inset": "15"
+        }
+    }
+}
