@@ -57,8 +57,8 @@ $fn = 48;
 total_length = cover_length + overlap_h;
 // Largeur totale au mur
 total_width = cover_radius * 2 + lip_width * 2;
-// Position des vis (distance du centre)
-screw_offset_x = cover_radius + lip_width / 2;
+// Position des vis (distance du centre, doit correspondre a insert_offset_x dans cable_base.scad)
+screw_offset_x = 18;
 
 // --- Modules ---
 

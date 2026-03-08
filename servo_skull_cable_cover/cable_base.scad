@@ -41,12 +41,12 @@ screw_inset    = 15;    // mm
 
 /* [Inserts coffrage] */
 // Diametre insert M3 heat-set
-insert_d       = 4.2;   // mm (trou pour insert M3)
+insert_d       = 5.2;   // mm (trou pour insert M3, genereux)
 // Profondeur insert
-insert_h       = 5;     // mm
+insert_h       = 6;     // mm
 // Distance du centre de la base au centre de l'insert
-// Doit correspondre a screw_offset_x dans cable_cover.scad (cover_radius + lip_width/2 = 24mm)
-insert_offset_x = 24;   // mm
+// Doit correspondre a screw_offset_x dans cable_cover.scad
+insert_offset_x = 18;   // mm (x=10 et x=46, bien dans la base de 56mm)
 // Positions Y des inserts (depuis le bas du segment)
 insert_y1      = 50;    // mm
 insert_y2      = 230;   // mm
@@ -55,12 +55,26 @@ insert_y2      = 230;   // mm
 nozzle = 0.4;
 layer_h = 0.2;
 
+// --- Dimensions calculees ---
+insert_boss_d  = insert_d + 5;  // diametre du bossage autour de l'insert
+insert_boss_h  = insert_h + 1;  // hauteur du bossage (depasse de la base)
+
 // --- Construction ---
 
 module base_plate() {
     difference() {
-        // Plaque principale
-        cube([base_width, base_length, base_thick + channel_d]);
+        union() {
+            // Plaque principale
+            cube([base_width, base_length, base_thick + channel_d]);
+
+            // Bossages pour les inserts M3 (sureleves sur les ailes)
+            for (y = [insert_y1, insert_y2])
+                for (side = [-1, 1]) {
+                    ix = base_width / 2 + side * insert_offset_x;
+                    translate([ix, y, 0])
+                        cylinder(d = insert_boss_d, h = insert_boss_h, $fn = 24);
+                }
+        }
 
         // Canal central
         translate([(base_width - channel_w) / 2, -0.01, base_thick])
@@ -72,12 +86,11 @@ module base_plate() {
                 translate([base_width / 2 + side * (channel_w / 2 + 5), y, 0])
                     countersunk_hole();
 
-        // Trous pour inserts M3 heat-set (4 inserts par base)
-        // Inserts enfonces depuis le dessus (face avant), dans les ailes laterales
+        // Trous pour inserts M3 heat-set (4 inserts, dans les bossages)
         for (y = [insert_y1, insert_y2])
             for (side = [-1, 1]) {
                 ix = base_width / 2 + side * insert_offset_x;
-                translate([ix, y, base_thick - insert_h])
+                translate([ix, y, insert_boss_h - insert_h])
                     cylinder(d = insert_d, h = insert_h + 0.01, $fn = 24);
             }
     }
